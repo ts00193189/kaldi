@@ -317,7 +317,7 @@ class TransitionModel {
   int32 num_pdfs_;
 
 
-  KALDI_DISALLOW_COPY_AND_ASSIGN(TransitionModel);
+  // KALDI_DISALLOW_COPY_AND_ASSIGN(TransitionModel);
 
 };
 

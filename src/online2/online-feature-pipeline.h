@@ -114,7 +114,7 @@ struct OnlineFeaturePipelineConfig {
       feature_type("mfcc"), add_pitch(false), add_deltas(true),
       splice_feats(false) { }
 
-  OnlineFeaturePipelineConfig(
+  explicit OnlineFeaturePipelineConfig(
       const OnlineFeaturePipelineCommandLineConfig &cmdline_config);
 
   BaseFloat FrameShiftInSeconds() const;

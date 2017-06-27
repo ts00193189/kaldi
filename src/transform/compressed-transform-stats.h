@@ -44,11 +44,11 @@ namespace kaldi {
 class CompressedAffineXformStats {
  public:
   CompressedAffineXformStats(): beta_(0.0) { }
-  CompressedAffineXformStats(const AffineXformStats &input) {
+  explicit CompressedAffineXformStats(const AffineXformStats &input) {
     CopyFromAffineXformStats(input);
   }
   void CopyFromAffineXformStats(const AffineXformStats &input);
-  
+
   void CopyToAffineXformStats(AffineXformStats *output) const;
 
   void Write(std::ostream &os, bool binary) const;
@@ -72,7 +72,7 @@ class CompressedAffineXformStats {
   // Reverse the process of PrepareOneG.
   static void ExtractOneG(const SubVector<double> &linearized, double beta,
                           SpMatrix<double> *Gi);
-  
+
 };
 
 

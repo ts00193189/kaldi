@@ -128,7 +128,7 @@ ShiftedDeltaFeatures::ShiftedDeltaFeatures(
 
 void ShiftedDeltaFeatures::Process(const MatrixBase<BaseFloat> &input_feats,
                             int32 frame,
-                            SubVector<BaseFloat> *output_frame) const {
+                            VectorBase<BaseFloat> *output_frame) const {
   KALDI_ASSERT(frame < input_feats.NumRows());
   int32 num_frames = input_feats.NumRows(),
       feat_dim = input_feats.NumCols();

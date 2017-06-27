@@ -101,7 +101,7 @@ class AmDiagGmm {
 
   void RemovePdf(int32 pdf_index);
 
-  KALDI_DISALLOW_COPY_AND_ASSIGN(AmDiagGmm);
+  // KALDI_DISALLOW_COPY_AND_ASSIGN(AmDiagGmm);
 };
 
 

@@ -165,7 +165,7 @@ struct OnlineGmmDecodingConfig {
    objects in this header. */
 class OnlineGmmDecodingModels {
  public:
-  OnlineGmmDecodingModels(const OnlineGmmDecodingConfig &config);
+  explicit OnlineGmmDecodingModels(const OnlineGmmDecodingConfig &config);
 
   const TransitionModel &GetTransitionModel() const;
 

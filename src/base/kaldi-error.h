@@ -59,6 +59,14 @@ namespace kaldi {
 /// This is set by util/parse-options.{h, cc} if you set --verbose=? option.
 extern int32 g_kaldi_verbose_level;
 
+/// This is used for enabling/disabling the call to abort in the case of an
+/// assertion failure.
+extern bool g_abort_on_assert_failure;
+
+/// This is used for enabling/disabling the printing of stack trace in the
+/// case of an error.
+extern bool g_print_stack_trace_on_error;
+
 /// This is set by util/parse-options.{h, cc} (from argv[0]) and used (if set)
 /// in error reporting code to display the name of the program (this is because
 /// in our scripts, we often mix together the stderr of many programs).  it is
@@ -72,6 +80,15 @@ inline int32 GetVerboseLevel() { return g_kaldi_verbose_level; }
 /// automatically from ParseOptions.
 inline void SetVerboseLevel(int32 i) { g_kaldi_verbose_level = i; }
 
+/// This is used by executables to enable/disable the call to abort in the
+/// case of an assertion failure.
+inline void SetAbortOnAssertFailure(bool a) { g_abort_on_assert_failure = a; }
+
+/// This is used by executables to enable/disable the printing of stack trace
+/// in the case of an error.
+inline void SetPrintStackTraceOnError(bool p) {
+  g_print_stack_trace_on_error = p;
+}
 
 /***** KALDI LOGGING *****/
 

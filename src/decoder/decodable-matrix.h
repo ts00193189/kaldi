@@ -34,7 +34,7 @@ class DecodableMatrixScaledMapped: public DecodableInterface {
  public:
   // This constructor creates an object that will not delete "likes"
   // when done.
-  DecodableMatrixScaledMapped(const TransitionModel &tm,
+  explicit DecodableMatrixScaledMapped(const TransitionModel &tm,
                               const Matrix<BaseFloat> &likes,
                               BaseFloat scale): trans_model_(tm), likes_(&likes),
                                                 scale_(scale), delete_likes_(false) {
@@ -46,7 +46,7 @@ class DecodableMatrixScaledMapped: public DecodableInterface {
 
   // This constructor creates an object that will delete "likes"
   // when done.
-  DecodableMatrixScaledMapped(const TransitionModel &tm,
+  explicit DecodableMatrixScaledMapped(const TransitionModel &tm,
                               BaseFloat scale,
                               const Matrix<BaseFloat> *likes):
       trans_model_(tm), likes_(likes),
@@ -94,7 +94,7 @@ class DecodableMatrixScaledMapped: public DecodableInterface {
 */
 class DecodableMatrixMappedOffset: public DecodableInterface {
  public:
-  DecodableMatrixMappedOffset(const TransitionModel &tm):
+  explicit DecodableMatrixMappedOffset(const TransitionModel &tm):
       trans_model_(tm), frame_offset_(0), input_is_finished_(false) { }  
 
 
@@ -168,7 +168,7 @@ class DecodableMatrixMappedOffset: public DecodableInterface {
 
 class DecodableMatrixScaled: public DecodableInterface {
  public:
-  DecodableMatrixScaled(const Matrix<BaseFloat> &likes,
+  explicit DecodableMatrixScaled(const Matrix<BaseFloat> &likes,
                         BaseFloat scale):
     likes_(likes), scale_(scale) { }
   

@@ -169,7 +169,7 @@ struct ChunkTimeInfo {
 class UtteranceSplitter {
  public:
 
-  UtteranceSplitter(const ExampleGenerationConfig &config);
+  explicit UtteranceSplitter(const ExampleGenerationConfig &config);
 
 
   const ExampleGenerationConfig& Config() const { return config_; }

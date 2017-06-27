@@ -33,7 +33,7 @@ typedef std::vector<std::pair<EventType, Clusterable*> > BuildTreeStatsType;
 
 /// Typedef used when we get "all keys" from a set of stats-- used in specifying
 /// which kinds of questions to ask.
-typedef enum { kAllKeysInsistIdentical, kAllKeysIntersection, kAllKeysUnion } AllKeysType;
+typedef enum AllKeysType { kAllKeysInsistIdentical, kAllKeysIntersection, kAllKeysUnion } AllKeysType;
 
 /// @}
 

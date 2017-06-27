@@ -26,6 +26,7 @@
 #include <algorithm>
 #include "util/kaldi-io.h"
 #include "util/text-utils.h"
+#include "util/stl-utils.h"
 #include "matrix/kaldi-vector.h"
 #include "matrix/sparse-matrix.h"
 
@@ -229,7 +230,12 @@ template<int kFeatDim = 13> class SphinxMatrixHolder;
 /// and false if there was an error such as an invalid range.
 /// The generic version of this function just fails; we overload the template
 /// whenever we need it for a specific class.
-template <class T>
+/// Following generic definition excludes Matrix and Vector types.
+template <class T,
+          typename std::enable_if<
+              !is_specialization<T, Matrix>::value>::type* = nullptr,
+          typename std::enable_if<
+              !is_specialization<T, Vector>::value>::type* = nullptr >
 bool ExtractObjectRange(const T &input, const std::string &range, T *output) {
   KALDI_ERR << "Ranges not supported for objects of this type.";
   return false;

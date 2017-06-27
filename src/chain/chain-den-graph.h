@@ -60,8 +60,6 @@ class DenominatorGraph {
   // NumPdfs() - 1).
   int32 NumPdfs() const { return num_pdfs_; }
 
-  DenominatorGraph();
-
   // Initialize from epsilon-free acceptor FST with pdf-ids plus one as the
   // labels.  'num_pdfs' is only needeed for checking.
   DenominatorGraph(const fst::StdVectorFst &fst,

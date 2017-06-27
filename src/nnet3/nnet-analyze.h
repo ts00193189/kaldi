@@ -221,6 +221,7 @@ class ComputationVariables {
 struct Access {
   int32 command_index;
   AccessType access_type;
+  Access() {}
   Access(int32 command_index, AccessType access_type):
       command_index(command_index), access_type(access_type) { }
   bool operator < (const Access &other) const {

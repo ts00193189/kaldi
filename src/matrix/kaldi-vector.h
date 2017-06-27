@@ -41,11 +41,14 @@ class VectorBase {
   /// Set vector to all zeros.
   void SetZero();
 
-  /// Returns true if matrix is all zeros.
+  /// Returns true if vector is all zeros.
   bool IsZero(Real cutoff = 1.0e-06) const;     // replace magic number
 
-  /// Set all members of a vector to a specified value.
+  /// Set all vector items to the specified value.
   void Set(Real f);
+
+  /// Set the vector item at the given index to the specified value.
+  void Set(MatrixIndexT i, Real f);
 
   /// Set vector to random normally-distributed noise.
   void SetRandn();
@@ -112,12 +115,12 @@ class VectorBase {
 
   /// Copy data from another vector of different type (double vs. float)
   template<typename OtherReal>
-  void CopyFromVec(const VectorBase<OtherReal> &v);
+  typename std::enable_if<!std::is_same<OtherReal,Real>::value>::type
+  CopyFromVec(const VectorBase<OtherReal> &v);
 
   /// Copy from CuVector.  This is defined in ../cudamatrix/cu-vector.h
   template<typename OtherReal>
   void CopyFromVec(const CuVectorBase<OtherReal> &v);
-
 
   /// Apply natural log to all elements.  Throw if any element of
   /// the vector is negative (but doesn't complain about zero; the
@@ -186,7 +189,8 @@ class VectorBase {
   /// Add vector : *this = *this + alpha * rv^2  [element-wise squaring],
   /// with casting between floats and doubles.
   template<typename OtherReal>
-  void AddVec2(const Real alpha, const VectorBase<OtherReal> &v);
+  typename std::enable_if<!std::is_same<OtherReal,Real>::value>::type
+  AddVec2(const Real alpha, const VectorBase<OtherReal> &v);
 
   /// Add matrix times vector : this <-- beta*this + alpha*M*v.
   /// Calls BLAS GEMV.
@@ -219,18 +223,20 @@ class VectorBase {
   void MulElements(const VectorBase<Real> &v);
   /// Multipy element-by-element by another vector of different type.
   template<typename OtherReal>
-  void MulElements(const VectorBase<OtherReal> &v);
+  typename std::enable_if<!std::is_same<OtherReal,Real>::value>::type
+  MulElements(const VectorBase<OtherReal> &v);
 
   /// Divide element-by-element by a vector.
   void DivElements(const VectorBase<Real> &v);
   /// Divide element-by-element by a vector of different type.
   template<typename OtherReal>
-  void DivElements(const VectorBase<OtherReal> &v);
+  typename std::enable_if<!std::is_same<OtherReal,Real>::value>::type
+  DivElements(const VectorBase<OtherReal> &v);
 
   /// Add a constant to each element of a vector.
   void Add(Real c);
 
-  /// Add element-by-element product of vectlrs:
+  /// Add element-by-element product of vectors:
   //  this <-- alpha * v .* r + beta*this .
   void AddVecVec(Real alpha, const VectorBase<Real> &v,
                  const VectorBase<Real> &r, Real beta);
@@ -413,7 +419,8 @@ class Vector: public VectorBase<Real> {
   }
 
   /// Type conversion constructor.
-  template<typename OtherReal>
+  template<typename OtherReal,
+           typename std::enable_if<!std::is_same<OtherReal,Real>::value>::type* = nullptr >
   explicit Vector(const VectorBase<OtherReal> &v): VectorBase<Real>() {
     Resize(v.Dim(), kUndefined);
     this->CopyFromVec(v);
@@ -523,11 +530,15 @@ class SubVector : public VectorBase<Real> {
     VectorBase<Real>::dim_   = matrix.NumCols();
   }
 
+  /// Assignment operator
+  SubVector<Real> &operator = (const SubVector<Real> &other) {
+    this->data_ = other.data_;
+    this->dim_ = other.dim_;
+    return *this;
+  }
+
   ~SubVector() {}  ///< Destructor (does nothing; no pointers are owned here).
 
- private:
-  /// Disallow assignment operator.
-  SubVector & operator = (const SubVector &other) {}
 };
 
 /// @} end of "addtogroup matrix_group"
@@ -570,9 +581,9 @@ inline void AssertEqual(VectorBase<Real> &a, VectorBase<Real> &b,
 template<typename Real>
 Real VecVec(const VectorBase<Real> &v1, const VectorBase<Real> &v2);
 
-template<typename Real, typename OtherReal>
+template<typename Real, typename OtherReal,
+         typename std::enable_if<!std::is_same<OtherReal,Real>::value>::type* = nullptr >
 Real VecVec(const VectorBase<Real> &v1, const VectorBase<OtherReal> &v2);
-
 
 /// Returns \f$ v_1^T M v_2  \f$ .
 /// Not as efficient as it could be where v1 == v2.
@@ -591,4 +602,3 @@ Real VecMatVec(const VectorBase<Real> &v1, const MatrixBase<Real> &M,
 
 
 #endif  // KALDI_MATRIX_KALDI_VECTOR_H_
-

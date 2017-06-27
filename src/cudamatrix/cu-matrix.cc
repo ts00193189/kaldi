@@ -334,8 +334,9 @@ void CuMatrixBase<Real>::CopyFromMat(const MatrixBase<Real> &src,
 
 template<typename Real>
 template<typename OtherReal>
-void CuMatrixBase<Real>::CopyFromMat(const MatrixBase<OtherReal> &src,
-                                     MatrixTransposeType trans) {
+typename std::enable_if<!std::is_same<OtherReal, Real>::value>::type
+CuMatrixBase<Real>::CopyFromMat(const MatrixBase<OtherReal> &src,
+                                MatrixTransposeType trans) {
   CuMatrix<OtherReal> temp(src);
   this->CopyFromMat(temp, trans);
 }
@@ -2885,7 +2886,8 @@ template void Matrix<double>::Swap(CuMatrix<double> *mat);
 
 /// Copy constructor from another type.
 template<typename Real>
-template<typename OtherReal>
+template<typename OtherReal,
+         typename std::enable_if<!std::is_same<OtherReal, Real>::value>::type*>
 CuMatrix<Real>::CuMatrix(const CuMatrixBase<OtherReal> & M,
                          MatrixTransposeType trans) : CuMatrixBase<Real>() {
 

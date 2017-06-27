@@ -109,7 +109,7 @@ class ShiftedDeltaFeatures {
 
   void Process(const MatrixBase<BaseFloat> &input_feats,
                int32 frame,
-               SubVector<BaseFloat> *output_frame) const;
+               VectorBase<BaseFloat> *output_frame) const;
  private:
   ShiftedDeltaFeaturesOptions opts_;
   Vector<BaseFloat> scales_;  // a scaling window for each

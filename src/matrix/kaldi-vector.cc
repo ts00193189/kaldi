@@ -47,7 +47,8 @@ template
 double VecVec<>(const VectorBase<double> &a,
                 const VectorBase<double> &b);
 
-template<typename Real, typename OtherReal>
+template<typename Real, typename OtherReal,
+         typename std::enable_if<!std::is_same<OtherReal,Real>::value>::type* = nullptr >
 Real VecVec(const VectorBase<Real> &ra,
             const VectorBase<OtherReal> &rb) {
   MatrixIndexT adim = ra.Dim();
@@ -252,7 +253,8 @@ void VectorBase<Real>::CopyFromPtr(const Real *data, MatrixIndexT sz) {
 
 template<typename Real>
 template<typename OtherReal>
-void VectorBase<Real>::CopyFromVec(const VectorBase<OtherReal> &other) {
+typename std::enable_if<!std::is_same<OtherReal,Real>::value>::type
+VectorBase<Real>::CopyFromVec(const VectorBase<OtherReal> &other) {
   KALDI_ASSERT(dim_ == other.Dim());
   Real * __restrict__  ptr = data_;
   const OtherReal * __restrict__ other_ptr = other.Data();
@@ -335,6 +337,13 @@ template<typename Real>
 void VectorBase<Real>::Set(Real f) {
   // Why not use memset here?
   for (MatrixIndexT i = 0; i < dim_; i++) { data_[i] = f; }
+}
+
+template<typename Real>
+void VectorBase<Real>::Set(MatrixIndexT i, Real f) {
+  KALDI_PARANOID_ASSERT(static_cast<UnsignedMatrixIndexT>(i) <
+               static_cast<UnsignedMatrixIndexT>(dim_));
+  data_[i] = f;
 }
 
 template<typename Real>
@@ -967,7 +976,8 @@ void VectorBase<Real>::ReplaceValue(Real orig, Real changed) {
 
 template<typename Real>
 template<typename OtherReal>
-void VectorBase<Real>::MulElements(const VectorBase<OtherReal> &v) {
+typename std::enable_if<!std::is_same<OtherReal,Real>::value>::type
+VectorBase<Real>::MulElements(const VectorBase<OtherReal> &v) {
   KALDI_ASSERT(dim_ == v.Dim());
   const OtherReal *other_ptr = v.Data();
   for (MatrixIndexT i = 0; i < dim_; i++) {
@@ -1002,7 +1012,8 @@ void VectorBase<Real>::DivElements(const VectorBase<Real> &v) {
 
 template<typename Real>
 template<typename OtherReal>
-void VectorBase<Real>::DivElements(const VectorBase<OtherReal> &v) {
+typename std::enable_if<!std::is_same<OtherReal,Real>::value>::type
+VectorBase<Real>::DivElements(const VectorBase<OtherReal> &v) {
   KALDI_ASSERT(dim_ == v.Dim());
   const OtherReal *other_ptr = v.Data();
   for (MatrixIndexT i = 0; i < dim_; i++) {
@@ -1047,7 +1058,8 @@ void VectorBase<double>::AddVec(const double alpha, const VectorBase<float> &v);
 
 template<typename Real>
 template<typename OtherReal>
-void VectorBase<Real>::AddVec2(const Real alpha, const VectorBase<OtherReal> &v) {
+typename std::enable_if<!std::is_same<OtherReal,Real>::value>::type
+VectorBase<Real>::AddVec2(const Real alpha, const VectorBase<OtherReal> &v) {
   KALDI_ASSERT(dim_ == v.dim_);
   // remove __restrict__ if it causes compilation problems.
   Real *__restrict__ data = data_;

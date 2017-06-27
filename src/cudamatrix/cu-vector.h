@@ -77,7 +77,8 @@ class CuVectorBase {
   void CopyFromVec(const CuVectorBase<Real> &src);
 
   template<typename OtherReal>
-  void CopyFromVec(const CuVectorBase<OtherReal> &M);
+  typename std::enable_if<!std::is_same<OtherReal, Real>::value>::type
+  CopyFromVec(const CuVectorBase<OtherReal> &M);
 
   template<typename OtherReal>
   void CopyFromVec(const VectorBase<OtherReal> &src);
@@ -98,7 +99,8 @@ class CuVectorBase {
   void AddVec(Real alpha, const CuVectorBase<Real> &vec, Real beta = 1.0);
 
   template<typename OtherReal>
-  void AddVec(Real alpha, const CuVectorBase<OtherReal> &vec, Real beta = 1.0);
+  typename std::enable_if<!std::is_same<OtherReal, Real>::value>::type
+  AddVec(Real alpha, const CuVectorBase<OtherReal> &vec, Real beta = 1.0);
 
   /// Sum the rows of the matrix, add to vector
   void AddRowSumMat(Real alpha, const CuMatrixBase<Real> &mat, Real beta = 1.0);
@@ -241,13 +243,15 @@ class CuVector: public CuVectorBase<Real> {
     this->CopyFromVec(v);
   }
 
-  template<typename OtherReal>
+  template<typename OtherReal,
+           typename std::enable_if<!std::is_same<OtherReal,Real>::value>::type* = nullptr >
   explicit CuVector(const CuVectorBase<OtherReal> &v) : CuVectorBase<Real>() {
     Resize(v.Dim(), kUndefined);
     this->CopyFromVec(v);
   }
 
-  template<typename OtherReal>
+  template<typename OtherReal,
+           typename std::enable_if<!std::is_same<OtherReal,Real>::value>::type* = nullptr >
   explicit CuVector(const VectorBase<OtherReal> &v) : CuVectorBase<Real>() {
     Resize(v.Dim(), kUndefined);
     this->CopyFromVec(Vector<Real>(v));
@@ -340,7 +344,8 @@ inline void AssertEqual(const CuVectorBase<Real> &a,
 
 template<typename Real>
 template<typename OtherReal>
-void CuVectorBase<Real>::CopyFromVec(const CuVectorBase<OtherReal> &v) {
+typename std::enable_if<!std::is_same<OtherReal,Real>::value>::type
+CuVectorBase<Real>::CopyFromVec(const CuVectorBase<OtherReal> &v) {
   v.CopyToVec(&this);
 }
 

@@ -98,7 +98,7 @@ class PhoneContext: public fst::DeterministicOnDemandFst<fst::StdArc> {
 
   // Note: we hope not to use this, we will use a separate version of the
   // tree-building code that tries to reduce the number of 'context states'.
-  PhoneContext(int32 num_phones, const ContextDependencyInterface &ctx_dep);
+  // PhoneContext(int32 num_phones, const ContextDependencyInterface &ctx_dep);
 
   // Phones are numbered from 1 to NumPhones().
   int32 NumPhones() const { return num_phones_; }

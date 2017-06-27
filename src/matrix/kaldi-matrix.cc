@@ -611,7 +611,7 @@ Matrix<Real>::Matrix (const Matrix<Real> & M):
 
 /// Copy constructor from another type.
 template<typename Real>
-template<typename OtherReal>
+template<typename OtherReal, typename std::enable_if<!std::is_same<OtherReal,Real>::value>::type*>
 Matrix<Real>::Matrix(const MatrixBase<OtherReal> & M,
                      MatrixTransposeType trans) : MatrixBase<Real>() {
   if (trans == kNoTrans) {
@@ -872,7 +872,8 @@ void MatrixBase<Real>::CopyRowsFromVec(const VectorBase<Real> &rv) {
 
 template<typename Real>
 template<typename OtherReal>
-void MatrixBase<Real>::CopyRowsFromVec(const VectorBase<OtherReal> &rv) {
+typename std::enable_if<!std::is_same<OtherReal,Real>::value>::type
+MatrixBase<Real>::CopyRowsFromVec(const VectorBase<OtherReal> &rv) {
   if (rv.Dim() == num_rows_*num_cols_) {
     const OtherReal *rv_data = rv.Data();
     for (MatrixIndexT r = 0; r < num_rows_; r++) {
@@ -1193,6 +1194,11 @@ void MatrixBase<Real>::Set(Real value) {
       (*this)(row, col) = value;
     }
   }
+}
+
+template<typename Real>
+void MatrixBase<Real>::Set(MatrixIndexT r, MatrixIndexT c, Real value) {
+      (*this)(r, c) = value;
 }
 
 template<typename Real>

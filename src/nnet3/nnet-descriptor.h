@@ -194,7 +194,7 @@ class SwitchingForwardingDescriptor: public ForwardingDescriptor {
   virtual void GetNodeDependencies(std::vector<int32> *node_indexes) const;
 
   // takes ownership of items in src.
-  SwitchingForwardingDescriptor(std::vector<ForwardingDescriptor*> &src):
+  SwitchingForwardingDescriptor(const std::vector<ForwardingDescriptor*> &src):
       src_(src) { }
   virtual ~SwitchingForwardingDescriptor() { DeletePointers(&src_); }
  private:

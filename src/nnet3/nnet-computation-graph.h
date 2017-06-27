@@ -301,7 +301,7 @@ class CindexSet {
 
   /// with this constructor, represents the set of all Cindexes that exist
   /// in the graph.
-  CindexSet(const ComputationGraph &graph);
+  explicit CindexSet(const ComputationGraph &graph);
 
   /// with this constructor, represents the set of all Cindexes that exist in
   /// the graph and which are computable.  If treat_unknown_as_computable is

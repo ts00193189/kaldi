@@ -57,7 +57,8 @@ class SpMatrix : public PackedMatrix<Real> {
   SpMatrix(const SpMatrix<Real> &orig)
       : PackedMatrix<Real>(orig) {}
 
-  template<typename OtherReal>
+  template<typename OtherReal,
+  typename std::enable_if<!std::is_same<OtherReal,Real>::value>::type* = nullptr >
   explicit SpMatrix(const SpMatrix<OtherReal> &orig)
       : PackedMatrix<Real>(orig) {}
 
@@ -87,7 +88,7 @@ class SpMatrix : public PackedMatrix<Real> {
   }
 
   template<typename OtherReal>
-  void CopyFromSp(const SpMatrix<OtherReal> &other) {
+  typename std::enable_if<!std::is_same<OtherReal, Real>::value>::type CopyFromSp(const SpMatrix<OtherReal> &other) {
     PackedMatrix<Real>::CopyFromPacked(other);
   }
 
@@ -386,7 +387,8 @@ inline void AssertEqual(const SpMatrix<Real> &A,
 
 
 /// Returns tr(A B).
-template<typename Real, typename OtherReal>
+template<typename Real, typename OtherReal,
+         typename std::enable_if<!std::is_same<OtherReal,Real>::value>::type* = nullptr >
 Real TraceSpSp(const SpMatrix<Real> &A, const SpMatrix<OtherReal> &B);
 
 

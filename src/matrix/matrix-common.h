@@ -27,24 +27,24 @@
 #include "matrix/kaldi-blas.h"
 
 namespace kaldi {
-typedef enum {
+typedef enum MatrixTransposeType {
   kTrans    = CblasTrans,
   kNoTrans = CblasNoTrans
 } MatrixTransposeType;
 
-typedef enum {
+typedef enum MatrixResizeType {
   kSetZero,
   kUndefined,
   kCopyData
 } MatrixResizeType;
 
 
-typedef enum {
+typedef enum MatrixStrideType {
   kDefaultStride,
   kStrideEqualNumCols,
 } MatrixStrideType;
 
-typedef enum {
+typedef enum SpCopyType {
   kTakeLower,
   kTakeUpper,
   kTakeMean,

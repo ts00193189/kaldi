@@ -45,6 +45,10 @@ class TreeRenderer {
   // a distinctly colored trace corresponding to the event.
   void Render(const EventType *query);
 
+  void RenderQuery(const EventType &query);
+
+  void Render() { Render(NULL); }
+
  private:
   // Looks-up the next token from the stream and invokes
   // the appropriate render method to visualize it

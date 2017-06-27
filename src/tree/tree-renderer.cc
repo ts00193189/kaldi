@@ -195,4 +195,8 @@ void TreeRenderer::Render(const EventType *query = 0) {
   ExpectToken(is_, binary_, "EndContextDependency");
 }
 
+void TreeRenderer::RenderQuery(const EventType &query) {
+  Render(&query);
+}
+
 } // namespace kaldi

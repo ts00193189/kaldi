@@ -889,7 +889,7 @@ class FixedAffineComponent: public Component {
   // Copy constructor from AffineComponent-- can be used when we're done
   // training a particular part of the model and want to efficiently disable
   // further training.
-  FixedAffineComponent(const AffineComponent &c);
+  explicit FixedAffineComponent(const AffineComponent &c);
 
   /// matrix should be of size input-dim+1 to output-dim, last col is offset
   void Init(const CuMatrixBase<BaseFloat> &matrix);

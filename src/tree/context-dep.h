@@ -97,6 +97,8 @@ class ContextDependency: public ContextDependencyInterface {
 
   const EventMap &ToPdfMap() const { return *to_pdf_; }
 
+  EventMap *ToPdfMapPtr() const { return to_pdf_; }
+
   /// GetPdfInfo returns a vector indexed by pdf-id, saying for each pdf which
   /// pairs of (phone, pdf-class) it can correspond to.  (Usually just one).
   /// c.f. hmm/hmm-topology.h for meaning of pdf-class.
@@ -138,11 +140,11 @@ class ContextDependency: public ContextDependencyInterface {
   EventMap *to_pdf_;  // owned here.
 
   // 'context' is the context-window of phones, of
-  // length N, with -1 for those positions where phones 
-  // that are currently unknown, treated as wildcards; at least 
-  // the central phone [position P] must be a real phone, i.e. 
-  // not -1. 
-  // This function inserts any allowed pairs (forward_pdf, self_loop_pdf) 
+  // length N, with -1 for those positions where phones
+  // that are currently unknown, treated as wildcards; at least
+  // the central phone [position P] must be a real phone, i.e.
+  // not -1.
+  // This function inserts any allowed pairs (forward_pdf, self_loop_pdf)
   // to the set "pairs".
   void EnumeratePairs(
       const std::vector<int32> &phones,

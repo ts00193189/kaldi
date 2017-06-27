@@ -34,6 +34,11 @@ AccumDiagGmm& AccumAmDiagGmm::GetAcc(int32 index) {
   return *(gmm_accumulators_[index]);
 }
 
+AccumDiagGmm* AccumAmDiagGmm::GetAccPtr(int32 index) {
+  KALDI_ASSERT(index >= 0 && index < static_cast<int32>(gmm_accumulators_.size()));
+  return gmm_accumulators_[index];
+}
+
 AccumAmDiagGmm::~AccumAmDiagGmm() {
   DeletePointers(&gmm_accumulators_);
 }
@@ -197,7 +202,7 @@ void MleAmDiagGmmUpdate (const MleDiagGmmOptions &config,
                << " GMM and setting to zero-mean, unit-variance.";
     ResizeModel(am_diag_gmm_acc.Dim(), am_gmm);
   }
-  
+
   KALDI_ASSERT(am_gmm != NULL);
   KALDI_ASSERT(am_diag_gmm_acc.NumAccs() == am_gmm->NumPdfs());
   if (obj_change_out != NULL) *obj_change_out = 0.0;
@@ -209,7 +214,7 @@ void MleAmDiagGmmUpdate (const MleDiagGmmOptions &config,
   for (int32 i = 0; i < am_diag_gmm_acc.NumAccs(); i++) {
     BaseFloat obj_change, count;
     int32 elems_floored, gauss_floored, gauss_removed;
-    
+
     MleDiagGmmUpdate(config, am_diag_gmm_acc.GetAcc(i), flags,
                      &(am_gmm->GetPdf(i)),
                      &obj_change, &count, &elems_floored,
@@ -279,7 +284,7 @@ void AccumAmDiagGmm::Scale(BaseFloat scale) {
 void AccumAmDiagGmm::Add(BaseFloat scale, const AccumAmDiagGmm &other) {
   total_frames_ += scale * other.total_frames_;
   total_log_like_ += scale * other.total_log_like_;
-  
+
   int32 num_accs = NumAccs();
   KALDI_ASSERT(num_accs == other.NumAccs());
   for (int32 i = 0; i < num_accs; i++)

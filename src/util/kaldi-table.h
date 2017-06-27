@@ -271,6 +271,15 @@ class RandomAccessTableReader {
   RandomAccessTableReader(const RandomAccessTableReader<Holder>
                           &other):
       impl_(NULL) { KALDI_ASSERT(other.impl_ == NULL); }
+
+  // Allow move assignment.
+  RandomAccessTableReader &operator = (RandomAccessTableReader &&other) {
+    this->Close();
+    this->impl_ = other.impl_;
+    other.impl_ = NULL;
+    return *this;
+  }
+
  private:
   // Disallow assignment.
   RandomAccessTableReader &operator=(const RandomAccessTableReader<Holder>&);
@@ -351,6 +360,15 @@ class SequentialTableReader {
   // stl vector)
   SequentialTableReader(const SequentialTableReader<Holder> &other):
       impl_(NULL) { KALDI_ASSERT(other.impl_ == NULL); }
+
+  // Allow move assignment.
+  SequentialTableReader &operator = (SequentialTableReader &&other) {
+    this->Close();
+    this->impl_ = other.impl_;
+    other.impl_ = NULL;
+    return *this;
+  }
+
  private:
   // Disallow assignment.
   SequentialTableReader &operator = (const SequentialTableReader<Holder>&);
@@ -405,6 +423,15 @@ class TableWriter {
   TableWriter(const TableWriter &other): impl_(NULL) {
     KALDI_ASSERT(other.impl_ == NULL);
   }
+
+  // Allow move assignment.
+  TableWriter &operator = (TableWriter &&other) {
+    this->Close();
+    this->impl_ = other.impl_;
+    other.impl_ = NULL;
+    return *this;
+  }
+
  private:
   TableWriter &operator = (const TableWriter&);  // Disallow assignment.
 
@@ -449,6 +476,14 @@ class RandomAccessTableReaderMapped {
   inline bool Close() { return reader_.Close(); }
 
 
+  // Allow move assignment.
+  RandomAccessTableReaderMapped &operator = (
+      RandomAccessTableReaderMapped &&other) {
+    this->Close();
+    this->impl_ = other.impl_;
+    other.impl_ = NULL;
+    return *this;
+  }
 
   // The default copy-constructor will do what we want: it will crash for
   // already-opened readers, by calling the member-variable copy-constructors.

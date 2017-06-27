@@ -690,6 +690,12 @@ std::ostream &Output::Stream() {  // will throw if not open; else returns
   return impl_->Stream();
 }
 
+std::ostream *Output::StreamPtr() {  // will throw if not open; else returns
+  // stream.
+  if (!impl_) KALDI_ERR << "Output::StreamPtr() called but not open.";
+  return &(impl_->Stream());
+}
+
 bool Output::Open(const std::string &wxfn, bool binary, bool header) {
   if (IsOpen()) {
     if (!Close()) {  // Throw here rather than return status, as it's an error
@@ -814,6 +820,10 @@ std::istream &Input::Stream() {
   return impl_->Stream();
 }
 
+std::istream *Input::StreamPtr() {
+  if (!IsOpen()) KALDI_ERR << "Input::StreamPtr(), not open.";
+  return &(impl_->Stream());
+}
 
 template <> void ReadKaldiObject(const std::string &filename,
                                  Matrix<float> *m) {

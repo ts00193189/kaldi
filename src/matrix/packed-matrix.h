@@ -52,12 +52,13 @@ template<typename Real> class PackedMatrix {
     CopyFromPacked(orig);
   }
 
-  template<typename OtherReal>
+  template<typename OtherReal,
+  typename std::enable_if<!std::is_same<OtherReal,Real>::value>::type* = nullptr >
   explicit PackedMatrix(const PackedMatrix<OtherReal> &orig) : data_(NULL) {
     Resize(orig.NumRows(), kUndefined);
     CopyFromPacked(orig);
   }
-  
+
   void SetZero();  /// < Set to zero
   void SetUnit();  /// < Set to unit matrix.
   void SetRandn(); /// < Set to random values of a normal distribution
@@ -92,13 +93,13 @@ template<typename Real> class PackedMatrix {
 
   template<typename OtherReal>
   void CopyFromPacked(const PackedMatrix<OtherReal> &orig);
-  
+
   /// CopyFromVec just interprets the vector as having the same layout
   /// as the packed matrix.  Must have the same dimension, i.e.
   /// orig.Dim() == (NumRows()*(NumRows()+1)) / 2;
   template<typename OtherReal>
   void CopyFromVec(const SubVector<OtherReal> &orig);
-  
+
   Real* Data() { return data_; }
   const Real* Data() const { return data_; }
   inline MatrixIndexT NumRows() const { return num_rows_; }
@@ -149,7 +150,7 @@ template<typename Real> class PackedMatrix {
   void Read(std::istream &in, bool binary, bool add = false);
 
   void Write(std::ostream &out, bool binary) const;
-  
+
   void Destroy();
 
   /// Swaps the contents of *this and *other.  Shallow swap.
@@ -194,4 +195,3 @@ std::istream & operator >> (std::istream &is, PackedMatrix<Real> &M) {
 }  // namespace kaldi
 
 #endif
-

@@ -215,8 +215,9 @@ class CuMatrixBase {
 
   // Copy functions.  These do not resize.
   template<typename OtherReal>
-  void CopyFromMat(const MatrixBase<OtherReal> &src,
-                   MatrixTransposeType trans = kNoTrans);
+  typename std::enable_if<!std::is_same<OtherReal, Real>::value>::type
+  CopyFromMat(const MatrixBase<OtherReal> &src,
+              MatrixTransposeType trans = kNoTrans);
 
   void CopyFromGeneralMat(const GeneralMatrix &src,
                           MatrixTransposeType trans = kNoTrans);
@@ -714,7 +715,8 @@ class CuMatrix: public CuMatrixBase<Real> {
   }
 
   /// Copy constructor: as above, but from another type.
-  template<typename OtherReal>
+  template<typename OtherReal,
+           typename std::enable_if<!std::is_same<OtherReal, Real>::value>::type* = nullptr >
   explicit CuMatrix(const CuMatrixBase<OtherReal> &M,
                     MatrixTransposeType trans = kNoTrans);
 
@@ -747,7 +749,8 @@ class CuMatrix: public CuMatrixBase<Real> {
   void Swap(CuMatrix<Real> *mat);
 
   template<typename OtherReal>
-  void Swap(CuMatrix<OtherReal> *mat);
+  typename std::enable_if<!std::is_same<OtherReal, Real>::value>::type
+  Swap(CuMatrix<OtherReal> *mat);
 
   /// I/O functions
   void Read(std::istream &is, bool binary);

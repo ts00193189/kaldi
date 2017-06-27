@@ -314,6 +314,21 @@ inline void MergePairVectorSumming(std::vector<std::pair<I, F> > *vec) {
   vec->erase(out, end);
 }
 
+/// This checks if a given type is a specialization of a reference type.
+/// Useful for excluding a type from the primary template of a function
+/// when an explicit specialization exist for that type. e.g.
+/// template <class T,
+///           class std::enable_if<
+///               !is_specialization<T, Matrix>::value>::type* = nullptr>
+/// bool ExtractObjectRange(const T &input, const string &range, T *output) {
+///   return false;
+/// }
+template<typename Test, template<typename...> class Ref>
+struct is_specialization : std::false_type {};
+
+template<template<typename...> class Ref, typename... Args>
+struct is_specialization<Ref<Args...>, Ref>: std::true_type {};
+
 }  // namespace kaldi
 
 #endif  // KALDI_UTIL_STL_UTILS_H_

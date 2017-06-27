@@ -49,6 +49,8 @@ class CuDevice {
   ~CuDevice();
   static inline CuDevice& Instantiate() { return global_device_; }
 
+  static inline CuDevice* InstantiatePtr() { return &global_device_; }
+
   inline cublasHandle_t GetHandle() { return handle_; }
 
   // We provide functions Malloc, MallocPitch and Free which replace cudaMalloc,

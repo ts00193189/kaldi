@@ -78,7 +78,7 @@ class AccumAmDiagGmm {
 
   BaseFloat TotStatsCount() const; // returns the total count got by summing the count
   // of the actual stats, may differ from TotCount() if e.g. you did I-smoothing.
-  
+
   // Be careful since total_frames_ is not updated in AccumulateForGaussian
   BaseFloat TotCount() const { return total_frames_; }
   BaseFloat TotLogLike() const { return total_log_like_; }
@@ -86,6 +86,8 @@ class AccumAmDiagGmm {
   const AccumDiagGmm& GetAcc(int32 index) const;
 
   AccumDiagGmm& GetAcc(int32 index);
+
+  AccumDiagGmm* GetAccPtr(int32 index);
 
   void Add(BaseFloat scale, const AccumAmDiagGmm &other);
 

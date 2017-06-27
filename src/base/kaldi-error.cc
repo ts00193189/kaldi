@@ -38,6 +38,8 @@ namespace kaldi {
 /***** GLOBAL VARIABLES FOR LOGGING *****/
 
 int32 g_kaldi_verbose_level = 0;
+bool g_abort_on_assert_failure = true;
+bool g_print_stack_trace_on_error = true;
 const char *g_program_name = NULL;
 static LogHandler g_log_handler = NULL;
 
@@ -193,7 +195,8 @@ void MessageLogger::HandleMessage(const LogMessageEnvelope &envelope,
            << ")";
 
     // Printing the message,
-    if (envelope.severity >= LogMessageEnvelope::kWarning) {
+    if (envelope.severity >= LogMessageEnvelope::kWarning ||
+        !g_print_stack_trace_on_error) {
       // VLOG, LOG, WARNING:
       fprintf(stderr, "%s %s\n", header.str().c_str(), message);
     } else {
@@ -206,8 +209,10 @@ void MessageLogger::HandleMessage(const LogMessageEnvelope &envelope,
   // Should we throw exception, or abort?
   switch (envelope.severity) {
     case LogMessageEnvelope::kAssertFailed:
-      abort(); // ASSERT_FAILED,
-      break;
+      if (g_abort_on_assert_failure)
+        abort(); // ASSERT_FAILED,
+      // break;
+      // Fall through to the kError case, i.e. treat this message as an error.
     case LogMessageEnvelope::kError:
       if (!std::uncaught_exception()) {
         // throw exception with empty message,

@@ -144,6 +144,9 @@ class Output {
 
   std::ostream &Stream();  // will throw if not open; else returns stream.
 
+  std::ostream *StreamPtr();  // will throw if not open; else returns stream.
+
+
   // Close closes the stream. Calling Close is never necessary unless you
   // want to avoid exceptions being thrown.  There are times when calling
   // Close will hurt efficiency (basically, when using offsets into files,
@@ -193,7 +196,7 @@ class Input {
   /// Equivalent to calling the default constructor followed by Open(); then, if
   /// binary != NULL, it calls ReadHeader(), putting the output in "binary"; it
   /// throws on error.
-  Input(const std::string &rxfilename, bool *contents_binary = NULL);
+  explicit Input(const std::string &rxfilename, bool *contents_binary = NULL);
 
   Input(): impl_(NULL) {}
 
@@ -225,6 +228,9 @@ class Input {
 
   // Returns the underlying stream. Throws if !IsOpen()
   std::istream &Stream();
+
+  // Returns the underlying stream. Throws if !IsOpen()
+  std::istream *StreamPtr();
 
   // Destructor does not throw: input streams may legitimately fail so we
   // don't worry about the status when we close them.

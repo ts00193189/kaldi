@@ -120,6 +120,8 @@ class MatrixBase {
   void SetZero();
   /// Sets all elements to a specific value.
   void Set(Real);
+  /// Set the matrix item at the given index to the specified value.
+  void Set(MatrixIndexT r, MatrixIndexT c, Real f);
   /// Sets to zero, except ones along diagonal [for non-square matrices too]
   void SetUnit();
   /// Sets to random values of a normal distribution
@@ -162,7 +164,8 @@ class MatrixBase {
   void CopyRowsFromVec(const CuVectorBase<Real> &v);
 
   template<typename OtherReal>
-  void CopyRowsFromVec(const VectorBase<OtherReal> &v);
+  typename std::enable_if<!std::is_same<OtherReal,Real>::value>::type
+  CopyRowsFromVec(const VectorBase<OtherReal> &v);
 
   /// Copies vector into matrix, column-by-column.
   /// Note that rv.Dim() must either equal NumRows()*NumCols() or NumRows();
@@ -774,7 +777,8 @@ class Matrix : public MatrixBase<Real> {
   Matrix(const Matrix<Real> & M);  //  (cannot make explicit)
 
   /// Copy constructor: as above, but from another type.
-  template<typename OtherReal>
+  template<typename OtherReal,
+           typename std::enable_if<!std::is_same<OtherReal,Real>::value>::type* = nullptr >
   explicit Matrix(const MatrixBase<OtherReal> & M,
                     MatrixTransposeType trans = kNoTrans);
 
@@ -933,9 +937,15 @@ class SubMatrix : public MatrixBase<Real> {
   MatrixBase<Real> (other.data_, other.num_cols_, other.num_rows_,
                     other.stride_) {}
 
- private:
-  /// Disallow assignment.
-  SubMatrix<Real> &operator = (const SubMatrix<Real> &other);
+  /// Assignment operator
+  SubMatrix<Real> &operator = (const SubMatrix<Real> &other) {
+    this->data_ = other.data_;
+    this->num_cols_ = other.num_cols_;
+    this->num_rows_ = other.num_rows_;
+    this->stride_ = other.stride_;
+    return *this;
+  }
+
 };
 /// @} End of "addtogroup matrix_funcs_io".
 

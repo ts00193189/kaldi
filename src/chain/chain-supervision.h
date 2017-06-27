@@ -273,7 +273,7 @@ void SortBreadthFirstSearch(fst::StdVectorFst *fst);
 // multiple pieces corresponding to different frame-ranges.
 class SupervisionSplitter {
  public:
-  SupervisionSplitter(const Supervision &supervision);
+  explicit SupervisionSplitter(const Supervision &supervision);
 
   // Extracts a frame range of the supervision into 'supervision'.  Note: the
   // supervision object should not be used for training before you do

@@ -67,7 +67,9 @@ class FullGmmNormal {
   Matrix<double> means_;                ///< Means
   std::vector<SpMatrix<double> > vars_;  ///< covariances
 
-  KALDI_DISALLOW_COPY_AND_ASSIGN(FullGmmNormal);
+  // KALDI_DISALLOW_COPY_AND_ASSIGN(FullGmmNormal);
+ private:
+  const FullGmmNormal &operator=(const FullGmmNormal &other);  // Disallow assignment.
 };
 
 }  // End namespace kaldi

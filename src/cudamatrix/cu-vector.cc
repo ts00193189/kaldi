@@ -1147,7 +1147,8 @@ void CuVectorBase<Real>::AddVec(Real alpha, const CuVectorBase<Real> &vec,
 
 template<typename Real>
 template<typename OtherReal>
-void CuVectorBase<Real>::AddVec(Real alpha, const CuVectorBase<OtherReal> &vec,
+typename std::enable_if<!std::is_same<OtherReal, Real>::value>::type
+CuVectorBase<Real>::AddVec(Real alpha, const CuVectorBase<OtherReal> &vec,
                                 Real beta) {
   // We could implement this directly, without using a temporary-- this can
   // be done later, when we have time.

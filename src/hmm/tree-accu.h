@@ -67,7 +67,7 @@ struct AccumulateTreeStatsInfo {
   std::vector<int32> phone_map;  // if nonempty, maps old phones to new phones.
   int32 context_width;
   int32 central_position;
-  AccumulateTreeStatsInfo(const AccumulateTreeStatsOptions &opts);
+  explicit AccumulateTreeStatsInfo(const AccumulateTreeStatsOptions &opts);
 };
 
 /// Accumulates the stats needed for training context-dependency trees (in the

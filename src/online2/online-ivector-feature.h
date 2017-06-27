@@ -180,7 +180,7 @@ struct OnlineIvectorExtractionInfo {
   bool greedy_ivector_extractor;
   BaseFloat max_remembered_frames;
 
-  OnlineIvectorExtractionInfo(const OnlineIvectorExtractionConfig &config);
+  explicit OnlineIvectorExtractionInfo(const OnlineIvectorExtractionConfig &config);
 
   void Init(const OnlineIvectorExtractionConfig &config);
 
@@ -208,7 +208,7 @@ struct OnlineIvectorExtractorAdaptationState {
   OnlineIvectorEstimationStats ivector_stats;
 
   /// This constructor initializes adaptation-state with no prior speaker history.
-  OnlineIvectorExtractorAdaptationState(const OnlineIvectorExtractionInfo &info):
+  explicit OnlineIvectorExtractorAdaptationState(const OnlineIvectorExtractionInfo &info):
       cmvn_state(info.global_cmvn_stats),
       ivector_stats(info.extractor.IvectorDim(),
                     info.extractor.PriorOffset(),

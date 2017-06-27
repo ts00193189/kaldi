@@ -87,7 +87,7 @@ class OnlineTimingStats {
 
 class OnlineTimer {
  public:
-  OnlineTimer(const std::string &utterance_id);
+  explicit OnlineTimer(const std::string &utterance_id);
 
   /// The call to SleepUntil(t) will sleep until cur_utterance_length seconds
   /// after this object was initialized, or return immediately if we've

@@ -47,7 +47,7 @@ class TpMatrix : public PackedMatrix<Real> {
   explicit TpMatrix(const CuTpMatrix<Real> &cu);
   
   
-  template<typename OtherReal> explicit TpMatrix(const TpMatrix<OtherReal>& orig)
+  template<typename OtherReal, typename std::enable_if<!std::is_same<OtherReal, Real>::value>::type* = nullptr> explicit TpMatrix(const TpMatrix<OtherReal>& orig)
       : PackedMatrix<Real>(orig) {}
   
   Real operator() (MatrixIndexT r, MatrixIndexT c) const {
@@ -105,7 +105,7 @@ class TpMatrix : public PackedMatrix<Real> {
     PackedMatrix<Real>::CopyFromPacked(other);
   }
 
-  template<typename OtherReal> void CopyFromTp(const TpMatrix<OtherReal> &other) {
+  template<typename OtherReal> typename std::enable_if<!std::is_same<OtherReal, Real>::value>::type CopyFromTp(const TpMatrix<OtherReal> &other) {
     PackedMatrix<Real>::CopyFromPacked(other);
   }
 

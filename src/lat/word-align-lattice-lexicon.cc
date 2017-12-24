@@ -924,11 +924,12 @@ static void MapSymbols(const WordAlignLatticeLexiconInfo &lexicon_info,
   }
 }
 
-static bool TestWordAlignedLattice(const WordAlignLatticeLexiconInfo &lexicon_info,
-                                   const TransitionModel &tmodel,
-                                   CompactLattice clat,
-                                   CompactLattice aligned_clat,
-                                   bool allow_duplicate_paths) {
+static bool TestWordAlignedLatticeLexicon(
+    const WordAlignLatticeLexiconInfo &lexicon_info,
+    const TransitionModel &tmodel,
+    CompactLattice clat,
+    CompactLattice aligned_clat,
+    bool allow_duplicate_paths) {
   int32 max_err = 5, num_err = 0;
   { // We test whether the forward-backward likelihoods differ; this is intended
     // to detect when we have duplicate paths in the aligned lattice, for some path
@@ -1038,8 +1039,8 @@ bool WordAlignLatticeLexicon(const CompactLattice &lat,
   // We'll let the calling code warn if this is false; it will know the utterance-id.
   ans = aligner.AlignLattice() && ans;
   if (ans && opts.test) { // We only test if it succeeded.
-    if (!TestWordAlignedLattice(lexicon_info, tmodel, lat, *lat_out,
-                                opts.allow_duplicate_paths)) {
+    if (!TestWordAlignedLatticeLexicon(lexicon_info, tmodel, lat, *lat_out,
+                                       opts.allow_duplicate_paths)) {
       KALDI_WARN << "Lattice failed test (activated because --test=true). "
                  << "Probable code error, please contact Kaldi maintainers.";
       ans = false;
@@ -1065,4 +1066,3 @@ bool ReadLexiconForWordAlign (std::istream &is,
 }
 
 }  // namespace kaldi
-

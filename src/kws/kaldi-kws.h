@@ -22,7 +22,7 @@
 #define KALDI_KWS_KALDI_KWS_H_
 
 #include "fst/fstlib.h"
-#include "lat/arctic-weight.h"
+#include "fstext/arctic-weight.h"
 
 namespace kaldi {
 

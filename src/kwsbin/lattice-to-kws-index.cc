@@ -23,10 +23,8 @@
 #include "util/common-utils.h"
 #include "fstext/fstext-utils.h"
 #include "lat/kaldi-lattice.h"
-#include "lat/lattice-functions.h"
 #include "kws/kaldi-kws.h"
 #include "kws/kws-functions.h"
-#include "fstext/epsilon-property.h"
 
 int main(int argc, char *argv[]) {
   try {
@@ -115,6 +113,7 @@ int main(int argc, char *argv[]) {
         n_fail++;
         continue;
       }
+      int32 utterance_id = usymtab_reader.Value(key);
 
       // Topologically sort the lattice, if not already sorted.
       uint64 props = clat.Properties(fst::kFstProperties, false);
@@ -126,90 +125,15 @@ int main(int argc, char *argv[]) {
         }
       }
 
-      // Get the alignments
-      std::vector<int32> state_times;
-      CompactLatticeStateTimes(clat, &state_times);
-
-      // Cluster the arcs in the CompactLattice, write the cluster_id on the
-      // output label side.
-      // ClusterLattice() corresponds to the second part of the preprocessing in
-      // Dogan and Murat's paper -- clustering. Note that we do the first part
-      // of preprocessing (the weight pushing step) later when generating the
-      // factor transducer.
-      KALDI_VLOG(1) << "Arc clustering...";
-      bool success = false;
-      success = kaldi::ClusterLattice(&clat, state_times);
-      if (!success) {
-        KALDI_WARN << "State id's and alignments do not match for lattice "
-                   << key;
+      // Construct KWS index.
+      KwsLexicographicFst index_transducer;
+      if (!LatticeToKwsIndexDestructive(&clat, utterance_id, max_silence_frames,
+                                        max_states, allow_partial,
+                                        &index_transducer)) {
+        KALDI_WARN << "KWS index construction failed for lattice " << key;
         n_fail++;
         continue;
       }
-
-      // The next part is something new, not in the Dogan and Can paper.  It is
-      // necessary because we have epsilon arcs, due to silences, in our
-      // lattices.  We modify the factor transducer, while maintaining
-      // equivalence, to ensure that states don't have both epsilon *and*
-      // non-epsilon arcs entering them.  (and the same, with "entering"
-      // replaced with "leaving").  Later we will find out which states have
-      // non-epsilon arcs leaving/entering them and use it to be more selective
-      // in adding arcs to connect them with the initial/final states.  The goal
-      // here is to disallow silences at the beginning or ending of a keyword
-      // occurrence.
-      if (true) {
-        EnsureEpsilonProperty(&clat);
-        fst::TopSort(&clat);
-        // We have to recompute the state times because they will have changed.
-        CompactLatticeStateTimes(clat, &state_times);
-      }
-
-      // Generate factor transducer
-      // CreateFactorTransducer() corresponds to the "Factor Generation" part of
-      // Dogan and Murat's paper. But we also move the weight pushing step to
-      // this function as we have to compute the alphas and betas anyway.
-      KALDI_VLOG(1) << "Generating factor transducer...";
-      KwsProductFst factor_transducer;
-      int32 utterance_id = usymtab_reader.Value(key);
-      success = kaldi::CreateFactorTransducer(clat,
-                                              state_times,
-                                              utterance_id,
-                                              &factor_transducer);
-      if (!success) {
-        KALDI_WARN << "Cannot generate factor transducer for lattice " << key;
-        n_fail++;
-      }
-
-      MaybeDoSanityCheck(factor_transducer);
-
-      // Remove long silence arc
-      // We add the filtering step in our implementation. This is because gap
-      // between two successive words in a query term should be less than 0.5s
-      KALDI_VLOG(1) << "Removing long silence...";
-      RemoveLongSilences(max_silence_frames, state_times, &factor_transducer);
-
-      MaybeDoSanityCheck(factor_transducer);
-
-      // Do factor merging, and return a transducer in T*T*T semiring. This step
-      // corresponds to the "Factor Merging" part in Dogan and Murat's paper.
-      KALDI_VLOG(1) << "Merging factors...";
-      KwsLexicographicFst index_transducer;
-      DoFactorMerging(&factor_transducer, &index_transducer);
-
-      MaybeDoSanityCheck(index_transducer);
-
-      // Do factor disambiguation. It corresponds to the "Factor Disambiguation"
-      // step in Dogan and Murat's paper.
-      KALDI_VLOG(1) << "Doing factor disambiguation...";
-      DoFactorDisambiguation(&index_transducer);
-
-      MaybeDoSanityCheck(index_transducer);
-
-      // Optimize the above factor transducer. It corresponds to the
-      // "Optimization" step in the paper.
-      KALDI_VLOG(1) << "Optimizing factor transducer...";
-      OptimizeFactorTransducer(&index_transducer, max_states, allow_partial);
-
-      MaybeDoSanityCheck(index_transducer);
 
       // Write result
       index_writer.Write(key, index_transducer);

@@ -20,7 +20,6 @@
 
 #include "base/kaldi-common.h"
 #include "util/common-utils.h"
-#include "fstext/fstext-utils.h"
 #include "kws/kaldi-kws.h"
 #include "kws/kws-functions.h"
 
@@ -82,18 +81,7 @@ int main(int argc, char *argv[]) {
 
     if (skip_opt == false) {
       // Do the encoded epsilon removal, determinization and minimization
-      KwsLexicographicFst ifst = global_index;
-      EncodeMapper<KwsLexicographicArc> encoder(kEncodeLabels, ENCODE);
-      Encode(&ifst, &encoder);
-      try {
-        DeterminizeStar(ifst, &global_index, kDelta, NULL, max_states);
-      } catch(const std::exception &e) {
-        KALDI_WARN << e.what()
-                   << " (should affect speed of search but not results)";
-        global_index = ifst;
-      }
-      Minimize(&global_index, static_cast<KwsLexicographicFst*>(NULL), kDelta, true);
-      Decode(&global_index, encoder);
+      OptimizeKwsIndex(&global_index, max_states);
     } else {
       KALDI_LOG << "Skipping index optimization...";
     }

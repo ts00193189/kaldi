@@ -64,7 +64,7 @@ class SamplingLm : public ArpaFileParser {
   // us to avoid having to add a bunch of unnecessary n-grams to satisfy the
   // requirements of the ARPA file format.
   // It assumes that you have already called estimator.Estimate().
-  SamplingLm(const SamplingLmEstimator &estimator);
+  explicit SamplingLm(const SamplingLmEstimator &estimator);
 
   // This constructor is to be used prior to calling the 2-argument
   // Read() that readss the result of calling Write().

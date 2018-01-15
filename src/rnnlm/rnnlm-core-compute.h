@@ -40,7 +40,7 @@ class RnnlmCoreComputer {
        @param [in] nnet   The neural network that is to be used to evaluate
                           likelihoods (and possibly derivatives).
    */
-  RnnlmCoreComputer(const nnet3::Nnet &nnet);
+  explicit RnnlmCoreComputer(const nnet3::Nnet &nnet);
 
   /* Compute the objective on one minibatch (and possibly also derivatives
      w.r.t. the embedding).
@@ -72,8 +72,8 @@ class RnnlmCoreComputer {
   BaseFloat Compute(const RnnlmExample &minibatch,
                     const RnnlmExampleDerived &derived,
                     const CuMatrixBase<BaseFloat> &word_embedding,
-                    BaseFloat *weight = NULL,
-                    CuMatrixBase<BaseFloat> *word_embedding_deriv = NULL);
+                    CuMatrixBase<BaseFloat> *word_embedding_deriv = NULL,
+                    BaseFloat *weight = NULL);
 
  private:
 

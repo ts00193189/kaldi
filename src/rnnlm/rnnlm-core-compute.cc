@@ -30,8 +30,8 @@ BaseFloat RnnlmCoreComputer::Compute(
     const RnnlmExample &minibatch,
     const RnnlmExampleDerived &derived,
     const CuMatrixBase<BaseFloat> &word_embedding,
-    BaseFloat *weight,
-    CuMatrixBase<BaseFloat> *word_embedding_deriv) {
+    CuMatrixBase<BaseFloat> *word_embedding_deriv,
+    BaseFloat *weight) {
   using namespace nnet3;
 
   bool need_model_derivative = false;

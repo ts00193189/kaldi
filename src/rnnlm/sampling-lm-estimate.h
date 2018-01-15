@@ -197,7 +197,7 @@ class SamplingLm;  // Forward declaration.
 class SamplingLmEstimator {
  public:
   ///  Constructor.  Retains a reference to 'config'.
-  SamplingLmEstimator(const SamplingLmEstimatorOptions &config);
+  explicit SamplingLmEstimator(const SamplingLmEstimatorOptions &config);
 
   /** Processes one line of the input, adding it to the stored stats.
 

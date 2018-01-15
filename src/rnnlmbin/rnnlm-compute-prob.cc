@@ -107,7 +107,7 @@ int main(int argc, char *argv[]) {
         // compute for this minibatch.
         BaseFloat weight,
             objf = computer.Compute(minibatch, derived, word_embedding_mat,
-                                    &weight, NULL);
+                                    NULL, &weight);
         tot_weight += weight;
         tot_objf += objf;
         num_minibatches++;

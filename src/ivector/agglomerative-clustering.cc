@@ -23,7 +23,7 @@
 
 namespace kaldi {
 
-void AgglomerativeClusterer::Cluster() {
+void AgglomerativeClusterer::Cluster(std::vector<int32> *assignments) {
   KALDI_VLOG(2) << "Initializing cluster assignments.";
   Initialize();
 
@@ -40,7 +40,7 @@ void AgglomerativeClusterer::Cluster() {
       MergeClusters(i, j);
   }
 
-  std::vector<int32> new_assignments(num_points_);
+  assignments->resize(num_points_);
   int32 label_id = 0;
   std::set<int32>::iterator it;
   // Iterate through the clusters and assign all utterances within the cluster
@@ -52,10 +52,9 @@ void AgglomerativeClusterer::Cluster() {
     std::vector<int32>::iterator utt_it;
     for (utt_it = cluster->utt_ids.begin();
          utt_it != cluster->utt_ids.end(); ++utt_it)
-      new_assignments[*utt_it] = label_id;
+      (*assignments)[*utt_it] = label_id;
     delete cluster;
   }
-  assignments_->swap(new_assignments);
 }
 
 BaseFloat AgglomerativeClusterer::GetCost(int32 i, int32 j) {
@@ -123,10 +122,10 @@ void AgglomerativeCluster(
     const Matrix<BaseFloat> &costs,
     BaseFloat thresh,
     int32 min_clust,
-    std::vector<int32> *assignments_out) {
+    std::vector<int32> *assignments) {
   KALDI_ASSERT(min_clust >= 0);
-  AgglomerativeClusterer ac(costs, thresh, min_clust, assignments_out);
-  ac.Cluster();
+  AgglomerativeClusterer ac(costs, thresh, min_clust);
+  ac.Cluster(assignments);
 }
 
 }  // end namespace kaldi.

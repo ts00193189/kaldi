@@ -55,16 +55,14 @@ class AgglomerativeClusterer {
   AgglomerativeClusterer(
       const Matrix<BaseFloat> &costs,
       BaseFloat thresh,
-      int32 min_clust,
-      std::vector<int32> *assignments_out)
-      : count_(0), costs_(costs), thresh_(thresh), min_clust_(min_clust),
-        assignments_(assignments_out) {
+      int32 min_clust)
+      : count_(0), costs_(costs), thresh_(thresh), min_clust_(min_clust) {
     num_clusters_ = costs.NumRows();
     num_points_ = costs.NumRows();
   }
 
   // Performs the clustering
-  void Cluster();
+  void Cluster(std::vector<int32> *assignments);
  private:
   // Returns the cost between clusters with IDs i and j
   BaseFloat GetCost(int32 i, int32 j);
@@ -79,7 +77,6 @@ class AgglomerativeClusterer {
   const Matrix<BaseFloat> &costs_;  // cost matrix
   BaseFloat thresh_;  // stopping criterion threshold
   int32 min_clust_;  // minimum number of clusters
-  std::vector<int32> *assignments_;  // assignments out
 
   // Priority queue using greater (lowest costs are highest priority).
   // Elements contain pairs of cluster IDs and their cost.
@@ -130,7 +127,7 @@ void AgglomerativeCluster(
     const Matrix<BaseFloat> &costs,
     BaseFloat thresh,
     int32 min_clust,
-    std::vector<int32> *assignments_out);
+    std::vector<int32> *assignments);
 
 }  // end namespace kaldi.
 

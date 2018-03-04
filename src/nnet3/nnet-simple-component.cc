@@ -5414,7 +5414,7 @@ void CompositeComponent::InitFromConfig(ConfigLine *cfl) {
   this->Init(components, max_rows_process);
 }
 
-const Component* CompositeComponent::GetComponent(int32 i) const {
+Component* CompositeComponent::GetComponent(int32 i) {
   KALDI_ASSERT(static_cast<size_t>(i) < components_.size());
   return components_[i];
 }

@@ -2428,7 +2428,7 @@ class CompositeComponent: public UpdatableComponent {
   /// Gets the ith component in this component.
   /// The ordering is the same as in the config line. The caller
   /// does not own the received component.
-  const Component* GetComponent(int32 i) const;
+  Component* GetComponent(int32 i);
   /// Sets the ith component. After this call, CompositeComponent owns
   /// the reference to the argument component. Frees the previous
   /// ith component.

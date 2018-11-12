@@ -117,7 +117,7 @@ class GaussPostHolder {
   // reading.
   static bool IsReadInBinary() { return true; }
 
-  const T &Value() const { return t_; }
+  T &Value() { return t_; }
 
   void Swap(GaussPostHolder *other) {
     t_.swap(other->t_);

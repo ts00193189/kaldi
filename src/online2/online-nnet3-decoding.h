@@ -89,6 +89,8 @@ class SingleUtteranceNnet3Decoder {
 
   const LatticeFasterOnlineDecoder &Decoder() const { return decoder_; }
 
+  LatticeFasterOnlineDecoder *DecoderPtr() { return &decoder_; }
+
   ~SingleUtteranceNnet3Decoder() { }
  private:
 

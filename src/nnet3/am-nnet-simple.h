@@ -71,11 +71,15 @@ class AmNnetSimple {
   /// call SetContext() afterward.
   Nnet &GetNnet() { return nnet_; }
 
+  Nnet *GetNnetPtr() { return &nnet_; }
+
   void SetNnet(const Nnet &nnet);
 
   void SetPriors(const VectorBase<BaseFloat> &priors);
 
   const VectorBase<BaseFloat> &Priors() const { return priors_; }
+
+  VectorBase<BaseFloat> *PriorsPtr() { return &priors_; }
 
   std::string Info() const;
 

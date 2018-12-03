@@ -158,6 +158,11 @@ struct OnlineNnet2FeaturePipelineInfo {
   OnlineSilenceWeightingConfig silence_weighting_config;
 
   int32 IvectorDim() { return ivector_extractor_info.extractor.IvectorDim(); }
+
+  OnlineIvectorExtractionInfo *IvectorExtractionInfoPtr() {
+    return &ivector_extractor_info;
+  }
+
  private:
   KALDI_DISALLOW_COPY_AND_ASSIGN(OnlineNnet2FeaturePipelineInfo);
 };

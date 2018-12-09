@@ -74,7 +74,6 @@ class LatticeFasterOnlineDecoderTpl:
                                 FST *fst):
       LatticeFasterDecoderTpl<FST, Token>(config, fst) { }
 
-
   struct BestPathIterator {
     void *tok;
     int32 frame;
@@ -136,6 +135,7 @@ class LatticeFasterOnlineDecoderTpl:
                            bool use_final_probs,
                            BaseFloat beam) const;
 
+ protected:
   KALDI_DISALLOW_COPY_AND_ASSIGN(LatticeFasterOnlineDecoderTpl);
 };
 

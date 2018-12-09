@@ -230,6 +230,10 @@ class CachingOptimizingCompiler {
 
   ~CachingOptimizingCompiler();
 
+  const NnetComputation* CompilePtr(const ComputationRequest &request) {
+    return Compile(request).get();
+  }
+
   /// Does the compilation and returns a const pointer to the result, which is
   /// owned by this class, not the caller.  It calls ComputeCudaIndexes() for
   /// you, because you wouldn't be able to do this on a const object.
@@ -342,12 +346,6 @@ void LimitDerivativeTimes(const Nnet &nnet,
                           const NnetOptimizeOptions &opts,
                           NnetComputation *computation);
 
-/// This consolidates the model-update parts of the backprop into larger
-/// operations (applicable mostly to recurrent setups)-- internally it uses
-/// class ModelUpdateConsolidator.  Will fail if called a
-/// second time.
-void ConsolidateModelUpdate(const Nnet &nnet,
-                            NnetComputation *computation);
 
 /// This converts addition operations (things with Add in their names) to
 /// copy operations (things with Copy in their names).  This is slightly

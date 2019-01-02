@@ -47,7 +47,7 @@ class DiagGmm {
   /// Empty constructor.
   DiagGmm() : valid_gconsts_(false) { }
 
-  explicit DiagGmm(const DiagGmm &gmm): valid_gconsts_(false) {
+  DiagGmm(const DiagGmm &gmm): valid_gconsts_(false) {
     CopyFromDiagGmm(gmm);
   }
 
@@ -244,8 +244,6 @@ class DiagGmm {
                                      const VectorBase<BaseFloat> &s1,
                                      const VectorBase<BaseFloat> &s2) const;
 
- private:
-  const DiagGmm &operator=(const DiagGmm &other);  // Disallow assignment
 };
 
 /// ostream operator that calls DiagGMM::Write()

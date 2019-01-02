@@ -60,24 +60,25 @@ struct FmllrOptions {
 
 class FmllrDiagGmmAccs: public AffineXformStats {
  public:
-  // If supplied, the "opts" will only be used to limit the
-  // stats that are accumulated, to the parts we'll need in the
-  // update.
-  FmllrDiagGmmAccs(const FmllrOptions &opts = FmllrOptions()):
-      opts_(opts) { }
-  explicit FmllrDiagGmmAccs(const FmllrDiagGmmAccs &other):
+  FmllrDiagGmmAccs() { }
+
+  FmllrDiagGmmAccs(const FmllrDiagGmmAccs &other):
       AffineXformStats(other), single_frame_stats_(other.single_frame_stats_),
       opts_(other.opts_) {}
+
+  // The "opts" will only be used to limit the stats that are accumulated,
+  // to the parts we'll need in the update.
+  explicit FmllrDiagGmmAccs(const FmllrOptions &opts): opts_(opts) { }
   explicit FmllrDiagGmmAccs(int32 dim, const FmllrOptions &opts = FmllrOptions()):
       opts_(opts) { Init(dim); }
-  
+
   // The following initializer gives us an efficient way to
   // compute these stats from full-cov Gaussian statistics
   // (accumulated from a *diagonal* model (e.g. use
   // AccumFullGmm::AccumulateFromPosteriors or
   // AccumulateFromDiag).
   FmllrDiagGmmAccs(const DiagGmm &gmm, const AccumFullGmm &fgmm_accs);
-  
+
   void Init(size_t dim) {
     AffineXformStats::Init(dim, dim); single_frame_stats_.Init(dim);
   }
@@ -96,7 +97,7 @@ class FmllrDiagGmmAccs: public AffineXformStats {
                                       const std::vector<int32> &gselect,
                                       const VectorBase<BaseFloat> &data,
                                       BaseFloat weight);
-  
+
   /// Accumulate stats for a GMM, given supplied posteriors.
   void AccumulateFromPosteriors(const DiagGmm &gmm,
                                 const VectorBase<BaseFloat> &data,
@@ -110,7 +111,7 @@ class FmllrDiagGmmAccs: public AffineXformStats {
       const VectorBase<BaseFloat> &data,
       const VectorBase<BaseFloat> &posteriors);
 
-  
+
   /// Update
   void Update(const FmllrOptions &opts,
               MatrixBase<BaseFloat> *fmllr_mat,
@@ -119,17 +120,17 @@ class FmllrDiagGmmAccs: public AffineXformStats {
 
   // Note: we allow copy and assignment for this class.
 
-  // Note: you can use the inherited AffineXformStats::Read 
+  // Note: you can use the inherited AffineXformStats::Read
   //       and AffineXformStats::Write methods for writing/reading
-  //       of the object. It is not necessary to store the other 
+  //       of the object. It is not necessary to store the other
   //       private variables of this class
-       
+
  private:
   // The things below, added in 2013, relate to an optimization that lets us
   // speed up accumulation if there are multiple active pdfs per frame
   // (e.g. when accumulating from lattices), or if we don't anticipate
   // doing a "full" update.
-  
+
   struct SingleFrameStats {
     Vector<BaseFloat> x; // dim-dimensional features.
     Vector<BaseFloat> a; // linear term in per-frame auxf; dim is model-dim.
@@ -139,21 +140,21 @@ class FmllrDiagGmmAccs: public AffineXformStats {
     SingleFrameStats(const SingleFrameStats &s): x(s.x), a(s.a), b(s.b),
                                                  count(s.count) {}
     void Init(int32 dim);
-  };  
+  };
 
   void CommitSingleFrameStats();
 
   void InitSingleFrameStats(const VectorBase<BaseFloat> &data);
-  
+
   bool DataHasChanged(const VectorBase<BaseFloat> &data) const; // compares it to the
   // data in single_frame_stats_, returns true if it's different.
 
   SingleFrameStats single_frame_stats_;
-  
+
   // We only use the opts_ variable for its "update_type" data member,
   // which limits what parts of the G matrix we accumulate.
   FmllrOptions opts_;
-  
+
 };
 
 
@@ -264,8 +265,8 @@ void FmllrInnerUpdate(SpMatrix<double> &inv_G,
                       int32 row,
                       MatrixBase<double> *transform);
 
-                      
-                      
+
+
 
 
 } // namespace kaldi

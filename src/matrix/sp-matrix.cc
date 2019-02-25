@@ -364,7 +364,7 @@ float TraceSpSp(const SpMatrix<float> &A, const SpMatrix<float> &B) {
 
 
 template<typename Real, typename OtherReal,
-         typename std::enable_if<!std::is_same<OtherReal,Real>::value>::type* = nullptr >
+         typename std::enable_if<!std::is_same<OtherReal,Real>::value>::type*>
 Real TraceSpSp(const SpMatrix<Real> &A, const SpMatrix<OtherReal> &B) {
   KALDI_ASSERT(A.NumRows() == B.NumRows());
   Real ans = 0.0;

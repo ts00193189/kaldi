@@ -1344,6 +1344,11 @@ typename ArcTpl<Weight>::Label DeterminizeLatticeInsertPhones(
 
   return first_phone_label;
 }
+// instantiate for type LatticeWeight
+template
+ArcTpl<kaldi::LatticeWeight>::Label DeterminizeLatticeInsertPhones(
+    const kaldi::TransitionModel &trans_model,
+    MutableFst<ArcTpl<kaldi::LatticeWeight> > *fst);
 
 template<class Weight>
 void DeterminizeLatticeDeletePhones(

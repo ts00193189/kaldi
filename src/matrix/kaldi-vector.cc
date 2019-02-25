@@ -49,7 +49,7 @@ double VecVec<>(const VectorBase<double> &a,
                 const VectorBase<double> &b);
 
 template<typename Real, typename OtherReal,
-         typename std::enable_if<!std::is_same<OtherReal,Real>::value>::type* = nullptr >
+         typename std::enable_if<!std::is_same<OtherReal,Real>::value>::type*>
 Real VecVec(const VectorBase<Real> &ra,
             const VectorBase<OtherReal> &rb) {
   MatrixIndexT adim = ra.Dim();

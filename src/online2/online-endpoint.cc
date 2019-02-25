@@ -125,9 +125,20 @@ bool EndpointDetected(
                           frame_shift_in_seconds, final_relative_cost);
 }
 
+// Instantiate TrailingSilenceLength for the types we need.
+template
+int32 TrailingSilenceLength<fst::Fst<fst::StdArc> >(
+    const TransitionModel &tmodel,
+    const std::string &silence_phones_str,
+    const LatticeFasterOnlineDecoderTpl<fst::Fst<fst::StdArc> > &decoder);
+
+template
+int32 TrailingSilenceLength<fst::GrammarFst>(
+    const TransitionModel &tmodel,
+    const std::string &silence_phones_str,
+    const LatticeFasterOnlineDecoderTpl<fst::GrammarFst> &decoder);
 
 // Instantiate EndpointDetected for the types we need.
-// It will require TrailingSilenceLength so we don't have to instantiate that.
 template
 bool EndpointDetected<fst::Fst<fst::StdArc> >(
     const OnlineEndpointConfig &config,

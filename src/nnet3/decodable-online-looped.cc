@@ -239,9 +239,11 @@ BaseFloat DecodableNnetLoopedOnline::LogLikelihood(int32 subsampled_frame,
 }
 
 // faster direct access to the loglikelihoods by row
-SubVector<BaseFloat> DecodableNnetLoopedOnlineBase::LogLikelihoods(int32 subsampled_frame) {
+void DecodableNnetLoopedOnlineBase::LogLikelihoods(int32 subsampled_frame,
+						     Vector<BaseFloat> *loglikes) {
   EnsureFrameIsComputed(subsampled_frame);
-  return current_log_post_.Row(subsampled_frame - current_log_post_subsampled_offset_);
+  loglikes->Resize(current_log_post_.NumCols());
+  loglikes->CopyFromVec(current_log_post_.Row(subsampled_frame - current_log_post_subsampled_offset_));
 }
 
 

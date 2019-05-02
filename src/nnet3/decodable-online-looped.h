@@ -80,6 +80,8 @@ class DecodableNnetLoopedOnlineBase: public DecodableInterface {
   int32 FrameSubsamplingFactor() const {
     return info_.opts.frame_subsampling_factor;
   }
+  // Supply access to the loglikelihoods by row, for efficiency with pykaldi
+  SubVector<BaseFloat> LogLikelihoods(int32 subsampled_frame);
 
 
  protected:

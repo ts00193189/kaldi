@@ -82,7 +82,7 @@ class DecodableNnetLoopedOnlineBase: public DecodableInterface {
   }
   // Supply access to the loglikelihoods by row, for efficiency with pykaldi
   void LogLikelihoods(int32 subsampled_frame, Vector<BaseFloat> *loglikes);
-  void LogLikelihoods(int32 subsampled_frame_from, int32 subsampled_frame_to, Matrix<BaseFloat> *loglikes);
+  void LogLikelihoods(int32 subsampled_frame, int32 num_frames, Matrix<BaseFloat> *loglikes);
 
 
  protected:

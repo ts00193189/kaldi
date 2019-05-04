@@ -246,14 +246,13 @@ void DecodableNnetLoopedOnlineBase::LogLikelihoods(int32 subsampled_frame,
   loglikes->CopyFromVec(current_log_post_.Row(subsampled_frame - current_log_post_subsampled_offset_));
 }
 
-void DecodableNnetLoopedOnlineBase::LogLikelihoods(int32 subsampled_frame_from,
-						   int32 subsampled_frame_to,
+void DecodableNnetLoopedOnlineBase::LogLikelihoods(int32 subsampled_frame,
+						   int32 num_frames,
 						   Matrix<BaseFloat> *loglikes) {
-  EnsureFrameIsComputed(subsampled_frame_to - 1); // python range...
-  int num_rows = subsampled_frame_to - subsampled_frame_from;
-  KALDI_ASSERT(num_rows > 0);
-  loglikes->Resize(num_rows, current_log_post_.NumCols());
-  loglikes->CopyFromMat(current_log_post_.RowRange(subsampled_frame_from - current_log_post_subsampled_offset_, num_rows));
+  KALDI_ASSERT(num_frames > 0);
+  EnsureFrameIsComputed(subsampled_frame + num_frames - 1);
+  loglikes->Resize(num_frames, current_log_post_.NumCols());
+  loglikes->CopyFromMat(current_log_post_.RowRange(subsampled_frame - current_log_post_subsampled_offset_, num_frames));
 }
 
 

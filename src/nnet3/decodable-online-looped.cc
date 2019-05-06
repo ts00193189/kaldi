@@ -232,10 +232,27 @@ void DecodableNnetLoopedOnlineBase::AdvanceChunk() {
 BaseFloat DecodableNnetLoopedOnline::LogLikelihood(int32 subsampled_frame,
                                                     int32 index) {
   EnsureFrameIsComputed(subsampled_frame);
-  // note: we index by 'inde
+  // note: we index by 'index - 1'
   return current_log_post_(
       subsampled_frame - current_log_post_subsampled_offset_,
       index - 1);
+}
+
+// faster direct access to the loglikelihoods by row
+void DecodableNnetLoopedOnlineBase::LogLikelihoods(int32 subsampled_frame,
+						     Vector<BaseFloat> *loglikes) {
+  EnsureFrameIsComputed(subsampled_frame);
+  loglikes->Resize(current_log_post_.NumCols());
+  loglikes->CopyFromVec(current_log_post_.Row(subsampled_frame - current_log_post_subsampled_offset_));
+}
+
+void DecodableNnetLoopedOnlineBase::LogLikelihoods(int32 subsampled_frame,
+						   int32 num_frames,
+						   Matrix<BaseFloat> *loglikes) {
+  KALDI_ASSERT(num_frames > 0);
+  EnsureFrameIsComputed(subsampled_frame + num_frames - 1);
+  loglikes->Resize(num_frames, current_log_post_.NumCols());
+  loglikes->CopyFromMat(current_log_post_.RowRange(subsampled_frame - current_log_post_subsampled_offset_, num_frames));
 }
 
 

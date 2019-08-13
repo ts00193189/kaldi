@@ -47,7 +47,6 @@ namespace nnet3 {
    value 'x' at the output will map to block 'x % n_blocks' of the dimension
    blocks of the input, and to an x value 'x / n_blocks' of the input.  For negative
    x values the % and / operations are always rounded down, not towards zero.
-
    The config line is of the form
      input-dim=xx output-dim=xx
    where input-dim must be a multiple of the output-dim, and n_blocks is
@@ -158,7 +157,6 @@ class DistributeComponentPrecomputedIndexes:
   Class StatisticsExtractionComponent is used together with
   StatisticsPoolingComponent to extract moving-average mean and
   standard-deviation statistics.
-
   StatisticsExtractionComponent is designed to extract statistics-- 0th-order,
   1st-order and optionally diagonal 2nd-order stats-- from small groups of
   frames, such as 10 frames.  The statistics will then be further processed by
@@ -173,28 +171,22 @@ class DistributeComponentPrecomputedIndexes:
   and the computation of the intermediate stats means that most of the
   computation that goes into extracting the means and standard deviations for
   nearby frames is shared.
-
   The config line in a typical setup will be something like:
-
     input-dim=250 input-period=1 output-period=10 include-variance=true
-
   input-dim is self-explanatory.  The inputs will be obtained at multiples of
   input-period (e.g. it might be 3 for chain models).  output-period must be a
   multiple of input period, and the requested output indexes will be expected to
   be multiples of output-period (which you can ensure through use of the Round
   descriptor).  For instance, if you request the output on frame 80, it will
   consist of stats from input frames 80 through 89.
-
   An output of this component will be 'computable' any time at least one of
   the corresponding inputs is computable.
-
   In all cases the first dimension of the output will be a count (between 1 and
   10 inclusive in this example).  If include-variance=false, then the output
   dimension will be input-dim + 1.  and the output dimensions >0 will be
   1st-order statistics (sums of the input).  If include-variance=true, then the
   output dimension will be input-dim * 2 + 1, where the raw diagonal 2nd-order
   statistics are appended to the 0 and 1st order statistics.
-
   The default configuration values are:
      input-dim=-1 input-period=1 output-period=1 include-variance=true
  */
@@ -308,29 +300,23 @@ class StatisticsExtractionComponentPrecomputedIndexes:
   Class StatisticsPoolingComponent is used together with
   StatisticsExtractionComponent to extract moving-average mean and
   standard-deviation statistics.
-
   StatisticsPoolingComponent pools the stats over a specified window and
   computes means and possibly log-count and stddevs from them for you.
-
  # In StatisticsPoolingComponent, the first element of the input is interpreted
  # as a count, which we divide by.
  # Optionally the log of the count can be output, and you can allow it to be
  # repeated several times if you want (useful for systems using the jesus-layer).
  # The output dimension is equal to num-log-count-features plus (input-dim - 1).
-
  # If include-log-count==false, the output dimension is the input dimension minus one.
  # If output-stddevs=true, then it expects the input-dim to be of the form 2n+1 where n is
  #  presumably the original feature dim, and it interprets the last n dimensions of the feature
  #  as a variance; it outputs the square root of the variance instead of the actual variance.
-
  configs and their defaults:  input-dim=-1, input-period=1, left-context=-1, right-context=-1,
     num-log-count-features=0, output-stddevs=true, variance-floor=1.0e-10
-
  You'd access the output of the StatisticsPoolingComponent using rounding, e.g.
   Round(component-name, 10)
  or whatever, instead of just component-name, because its output is only defined at multiples
  of its input-period.
-
  The output of StatisticsPoolingComponent will only be defined if at least one input was defined.
  */
 class StatisticsPoolingComponent: public Component {
@@ -594,18 +580,14 @@ class BackpropTruncationComponentPrecomputedIndexes:
    way without requiring an unnecessary input.
    It is optionally trainable, and optionally you can use natural
    gradient.
-
    Configuration values accepted by this component, with defaults if
    applicable:
-
       output-dim              Dimension that this component outputs.
       is-updatable=true       True if you want this to be updatable.
       use-natural-gradient=true  True if you want the update to use natural gradient.
       output-mean=0.0         Mean of the parameters at initialization (the parameters
                               are what it outputs).
       output-stddev=0.0       Standard deviation of the parameters at initialization.
-
-
   Values inherited from UpdatableComponent (see its declaration in
   nnet-component-itf for details):
      learning-rate
@@ -679,6 +661,8 @@ class ConstantComponent: public UpdatableComponent {
   virtual int32 NumParameters() const;
   virtual void Vectorize(VectorBase<BaseFloat> *params) const;
   virtual void UnVectorize(const VectorBase<BaseFloat> &params);
+
+  virtual void ConsolidateMemory();
  private:
 
   // the output value-- a vector.
@@ -791,27 +775,22 @@ class DropoutMaskComponent: public RandomComponent {
    either share the dropout mask across all of time, or across groups
    of 't' values (e.g. the first block of 10 values gets one dropout
    mask, the second block of 10 gets another one, and so on).
-
-
+   It also has support for the frequency component of SpecAugment.
    Configuration values accepted on the command line, with defaults:
-
        dim        Dimension of the input and output of this component,
                   e.g. 512
-
        block-dim  Block size if you want the dropout mask to repeat,
                   e.g. if dim=512 and you sent block-dim=128, there will
                   be a mask of dimension 128 repeated 4 times.  This can
                   be useful in convolutional setups.  If not specified,
                   block-dim defaults to 'dim'; if specified, it must be
                   a divisor of 'dim'.
-
        dropout-proportion=0.5   For conventional dropout, this is the proportion
                   of mask values that (in expectation) are zero; it would
                   normally be between 0 and 0.5.  The nonzero mask values
                   will be given values 1.0 / dropout_proportion, so that the
                   expected value is 1.0.  This behavior is different from
                   DropoutComponent and DropoutMaskComponent.
-
                   For continuous dropout (continuous==true), the dropout scales
                   will have values (1.0 + 2 * dropout-proportion *
                   Uniform[-1,1]).  This might seem like a strange choice, but it
@@ -819,7 +798,6 @@ class DropoutMaskComponent: public RandomComponent {
                   'extremal' case where the dropout scales are distributed as
                   Uniform[0, 2] and we can pass in the dropout scale as if it
                   were a conventional dropout scale.
-
        time-period=0   This determines how the dropout mask interacts
                   with the time index (t).  In all cases, different sequences
                   (different 'n' values) get different dropout masks.
@@ -834,7 +812,24 @@ class DropoutMaskComponent: public RandomComponent {
                   If you set time-period==1 it would be similar to regular
                   dropout, and it would probably make more sense to just use the
                   normal DropoutComponent.
-
+       specaugment-max-proportion=0  If nonzero, causes this component to
+                 implement SpecAugment.  (Note: you probably would want this
+                 after a batch-norm component so the average at input is
+                 zero), and the input dim will be interpreted as some kind of
+                 frequency space, e.g. linear or mel.  specaugment-max-proportion
+                 will be the maximum proportion of the frequency
+                 space that this component might zero out (so multiply this by
+                 by input dim to get the maximum columns that might be zeroed out);
+                 the actual number of columns zeroed out for each sequence will
+                 be randomly chosen between zero and the maximum.  Note: the
+                 non-zeroed frequencies won't be multiplied by a constant more
+                 than one as we would in the normal dropout mode.
+       specaugment-max-regions=1  This can be set to a value greater than one
+                 (e.g., 2) to implement a variant of SpecAugment where instead
+                 of zeroing out a single region of the frequency spectrum
+                 we zero out a randomly chosen number of regions, from one to
+                 this number.  The maximum proportion of the frequency spectrum
+                 that we remove is unaffected.
  */
 class GeneralDropoutComponent: public RandomComponent {
  public:
@@ -887,7 +882,9 @@ class GeneralDropoutComponent: public RandomComponent {
 
  private:
 
-  // Returns a random matrix of dimension 'num_mask_rows' by 'block_dim_'.  This
+  // Returns a random matrix reflecting the masking we are applying.
+  // In the normal case where we are doing a
+  // of dimension 'num_mask_rows' by 'block_dim_'.  This
   // should not be called if test_mode_ is true or dropout_proportion_ is zero.
   CuMatrix<BaseFloat> *GetMemo(int32 num_mask_rows) const;
 
@@ -906,9 +903,11 @@ class GeneralDropoutComponent: public RandomComponent {
 
   BaseFloat dropout_proportion_;
 
-  bool continuous_;
+  BaseFloat specaugment_max_proportion_;
 
-  bool test_mode_;
+  int32 specaugment_max_regions_;
+
+  bool continuous_;
 
   const GeneralDropoutComponent &operator
   = (const GeneralDropoutComponent &other); // Disallow.
@@ -922,8 +921,11 @@ class GeneralDropoutComponentPrecomputedIndexes:
  public:
 
 
-  // num_mask_rows is the number of rows in the dropout-mask matrix;
-  // it's num-cols is the block_dim_ of the component.
+  // num_mask_rows is the number of rows in the dropout-mask matrix, which will
+  // in the normal case equal the number of sequences we are processing.  Its
+  // num-cols is the block_dim_ of the component (e.g. might be the InputDim()
+  // (which is the same as OutputDim()), or maybe less if the block-dim option
+  // was specified.
   int32 num_mask_rows;
 
   // 'indexes' is of dimension (the number of rows in the matrix we're doing
@@ -946,6 +948,120 @@ class GeneralDropoutComponentPrecomputedIndexes:
 
   virtual std::string Type() const {
     return "GeneralDropoutComponentPrecomputedIndexes";
+  }
+};
+
+
+class SpecAugmentTimeMaskComponentPrecomputedIndexes;
+
+/**
+   SpecAugmentTimeMaskComponent implements the time part of SpecAugment.
+   Instead of zeroing out a single time-region of the input, though,
+   it zeroes out multiple smaller time-regions.
+   Configuration values accepted on the command line, with defaults:
+       dim        Dimension of the input and output of this component,
+                  e.g. 512
+       zeroed-proportion=0.25  Proportion of the input that is to be zeroed;
+                  should be in the range (0, 1).
+       time-mask-max-frames=10   The maximum time duration of the *zeroed*
+                  regions.  The non-zeroed regions in between will have maximum
+                 duration equal to this times (1-z)/z, where z
+                 is zeroed-proportion.
+ */
+class SpecAugmentTimeMaskComponent: public RandomComponent {
+ public:
+  virtual int32 InputDim() const { return dim_; }
+
+  virtual int32 OutputDim() const { return dim_; }
+
+  virtual std::string Info() const;
+
+  virtual void InitFromConfig(ConfigLine *cfl);
+
+  SpecAugmentTimeMaskComponent();
+
+  SpecAugmentTimeMaskComponent(const SpecAugmentTimeMaskComponent &other);
+
+  virtual std::string Type() const { return "SpecAugmentTimeMaskComponent"; }
+  virtual int32 Properties() const {
+    return kRandomComponent|kPropagateInPlace|kBackpropInPlace|kUsesMemo;
+  }
+
+  virtual void* Propagate(const ComponentPrecomputedIndexes *indexes,
+                          const CuMatrixBase<BaseFloat> &in,
+                          CuMatrixBase<BaseFloat> *out) const;
+  virtual void Backprop(const std::string &debug_info,
+                        const ComponentPrecomputedIndexes *indexes,
+                        const CuMatrixBase<BaseFloat> &, // in_value
+                        const CuMatrixBase<BaseFloat> &, // out_value
+                        const CuMatrixBase<BaseFloat> &out_deriv,
+                        void *memo,
+                        Component *to_update,
+                        CuMatrixBase<BaseFloat> *in_deriv) const;
+
+  virtual void DeleteMemo(void *memo) const {
+    delete static_cast<CuVector<BaseFloat>*>(memo);
+  }
+
+  virtual ComponentPrecomputedIndexes* PrecomputeIndexes(
+      const MiscComputationInfo &misc_info,
+      const std::vector<Index> &input_indexes,
+      const std::vector<Index> &output_indexes,
+      bool need_backprop) const;
+
+  virtual void Read(std::istream &is, bool binary);
+  virtual void Write(std::ostream &os, bool binary) const;
+
+  virtual Component* Copy() const;
+
+ private:
+
+  // Returns a random vector reflecting the masking we are applying.
+  CuVector<BaseFloat> *GetMemo(
+      const SpecAugmentTimeMaskComponentPrecomputedIndexes &indexes) const;
+
+
+  // The input and output dimension
+  int32 dim_;
+
+  BaseFloat zeroed_proportion_;
+
+  int32 time_mask_max_frames_;
+
+  const SpecAugmentTimeMaskComponent &operator
+  = (const SpecAugmentTimeMaskComponent &other); // Disallow.
+};
+
+// This stores some precomputed indexes for SpecAugmentTimeMaskComponent.
+// This object is created for every instance of the Propagate()
+// function in the compiled computation.
+class SpecAugmentTimeMaskComponentPrecomputedIndexes:
+      public ComponentPrecomputedIndexes {
+ public:
+
+  // 'indexes' is indexed first by sequence and then by time within that
+  // sequence; each list indexes[s] is a consecutive list of the elements of
+  // that sequence (e.g. t=0, t=1, and so on).  The int32 values inside these
+  // lists are row-indexes into the matrix that is at the input and output of
+  // this component.
+  std::vector<std::vector<int32> > indexes;
+
+  // 'tot_size' is the total number of elements in 'indexes', equal to the
+  // num-rows of the matrix we're doing dropout on.
+  int32 tot_size;
+
+  virtual ~SpecAugmentTimeMaskComponentPrecomputedIndexes() { }
+
+  ComponentPrecomputedIndexes *Copy() const {
+    return new SpecAugmentTimeMaskComponentPrecomputedIndexes(*this);
+  }
+
+  virtual void Write(std::ostream &os, bool binary) const;
+
+  virtual void Read(std::istream &is, bool binary);
+
+  virtual std::string Type() const {
+    return "SpecAugmentTimeMaskComponentPrecomputedIndexes";
   }
 };
 
